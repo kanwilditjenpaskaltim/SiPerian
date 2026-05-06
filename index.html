@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiPerian - Sistem Permohonan Praktik Kerja dan Penelitian</title>
+
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            DEFAULT: '#0a192f',
+                            light: '#112240',
+                            lighter: '#233554'
+                        },
+                        gold: {
+                            DEFAULT: '#D4AF37',
+                            light: '#F3E5AB'
+                        },
+                        platinum: '#E5E4E2',
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background:
+                linear-gradient(135deg, rgba(10, 25, 47, 0.85) 0%, rgba(17, 34, 64, 0.75) 50%, rgba(229, 228, 226, 0.15) 80%, rgba(212, 175, 55, 0.25) 100%),
+                url('Kanwil Kaltim.png') center/cover no-repeat fixed;
+            color: #E5E4E2;
+            min-height: 100vh;
+        }
+
+        /* Glassmorphism / Soft UI Card Style */
+        .glass-card {
+            background: rgba(17, 34, 64, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-8px);
+            border-color: #D4AF37;
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 15px 40px -10px rgba(212, 175, 55, 0.3);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a192f;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #233554;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #D4AF37;
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 1s ease-in forwards;
+        }
+
+        .slide-up {
+            animation: slideUp 0.8s ease-out forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .delay-100 {
+            animation-delay: 0.1s;
+        }
+
+        .delay-200 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-300 {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Modal Styles */
+        .modal {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            transform: scale(0.95) translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: linear-gradient(145deg, #112240, #0a192f);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        /* Lightbox */
+        .lightbox {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .lightbox.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .lightbox-img {
+            max-height: 90vh;
+            max-width: 95vw;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .lightbox.active .lightbox-img {
+            transform: scale(1);
+        }
+
+        /* Interactive Submenu Buttons */
+        .submenu-btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submenu-btn::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background-color: #D4AF37;
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .submenu-btn.active::before {
+            transform: scaleY(1);
+        }
+
+        .submenu-btn.active {
+            background-color: rgba(212, 175, 55, 0.1);
+            color: #D4AF37;
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        .submenu-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .submenu-content.active {
+            display: block;
+        }
+
+        /* Glowing background blobs */
+        .bg-blob {
+            position: absolute;
+            filter: blur(120px);
+            z-index: -1;
+            border-radius: 50%;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body class="flex items-center justify-center relative overflow-x-hidden selection:bg-gold selection:text-navy">
+
+    <!-- Ambient Background Effects -->
+    <div class="fixed inset-0 w-full h-full overflow-hidden pointer-events-none">
+        <div class="bg-blob w-96 h-96 bg-blue-600/20 top-[-10%] left-[-10%]"></div>
+        <div class="bg-blob w-96 h-96 bg-gold/10 bottom-[-10%] right-[-10%]"></div>
+    </div>
+
+    <!-- Top Left Institution Logo & Name -->
+    <div class="absolute top-4 left-4 md:top-6 md:left-8 flex items-center gap-3 z-50 fade-in">
+        <img id="nav-logo" src="Logo Kementrian Imigrasi dan Pemasyarakatan.png" alt="Logo Kementerian"
+            class="w-12 h-12 md:w-16 md:h-16 object-contain drop-shadow-lg transition-transform hover:scale-105"
+            onerror="this.src='https://via.placeholder.com/100x100/112240/D4AF37?text=Logo'">
+        <div class="flex flex-col">
+            <span
+                class="text-white font-bold text-xs sm:text-sm md:text-base leading-tight tracking-wide uppercase drop-shadow-md">Kantor
+                Wilayah Direktorat Jenderal Pemasyarakatan</span>
+            <span
+                class="text-gold font-semibold text-[10px] sm:text-xs md:text-sm leading-tight uppercase drop-shadow-md">Kalimantan
+                TImur</span>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-12 flex flex-col items-center justify-center min-h-screen relative z-10">
+
+        <!-- Header / Hero Section -->
+        <header class="text-center mb-16 fade-in w-full max-w-4xl mx-auto px-4">
+            <div class="relative inline-block mb-6 group">
+                <!-- Fallback to placeholder if logo.png is missing -->
+                <img src="logo.png" alt="Logo Instansi"
+                    class="w-32 md:w-40 h-auto relative z-10 drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] transition-transform duration-500 group-hover:scale-105"
+                    onerror="this.src='https://via.placeholder.com/160x160/112240/D4AF37?text=LOGO'">
+                <div
+                    class="absolute inset-0 bg-gold/20 blur-2xl rounded-full scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                </div>
+            </div>
+
+            <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold mb-4 tracking-tight text-white drop-shadow-lg">
+                Si<span class="text-transparent bg-clip-text bg-gradient-to-r from-gold to-yellow-200">Perian</span>
+            </h1>
+            <p class="text-lg md:text-2xl font-light text-platinum/90 max-w-2xl mx-auto leading-relaxed">
+                Sistem Permohonan Praktik Kerja dan Penelitian
+            </p>
+            <div
+                class="w-24 h-1.5 bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mt-8 rounded-full opacity-70">
+            </div>
+        </header>
+
+        <!-- Main Menu Cards -->
+        <main class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 w-full max-w-6xl mx-auto px-4">
+
+            <!-- Menu 1: Informasi Umum -->
+            <button onclick="openModal('modal-info')"
+                class="glass-card slide-up delay-100 p-8 flex flex-col items-center text-center group focus:outline-none focus:ring-2 focus:ring-gold/50">
+                <div
+                    class="w-24 h-24 rounded-2xl bg-gradient-to-br from-white/10 to-transparent flex items-center justify-center mb-6 border border-white/5 group-hover:from-gold/20 group-hover:to-transparent group-hover:border-gold/30 transition-all duration-500 shadow-inner">
+                    <i
+                        class="fas fa-info-circle text-4xl text-platinum group-hover:text-gold transition-colors duration-500 group-hover:scale-110"></i>
+                </div>
+                <h2 class="text-2xl font-semibold mb-3 text-white group-hover:text-gold transition-colors duration-300">
+                    Informasi Umum</h2>
+                <p class="text-sm text-platinum/60 leading-relaxed group-hover:text-platinum/80 transition-colors">Lihat
+                    jadwal operasional, alamat lengkap, dan kontak instansi kami.</p>
+            </button>
+
+            <!-- Menu 2: Alur Permohonan -->
+            <button onclick="openModal('modal-alur')"
+                class="glass-card slide-up delay-200 p-8 flex flex-col items-center text-center group focus:outline-none focus:ring-2 focus:ring-gold/50">
+                <div
+                    class="w-24 h-24 rounded-2xl bg-gradient-to-br from-white/10 to-transparent flex items-center justify-center mb-6 border border-white/5 group-hover:from-gold/20 group-hover:to-transparent group-hover:border-gold/30 transition-all duration-500 shadow-inner">
+                    <i
+                        class="fas fa-project-diagram text-4xl text-platinum group-hover:text-gold transition-colors duration-500 group-hover:scale-110"></i>
+                </div>
+                <h2 class="text-2xl font-semibold mb-3 text-white group-hover:text-gold transition-colors duration-300">
+                    Alur Permohonan</h2>
+                <p class="text-sm text-platinum/60 leading-relaxed group-hover:text-platinum/80 transition-colors">
+                    Panduan langkah demi langkah proses pengajuan dari awal hingga akhir.</p>
+            </button>
+
+            <!-- Menu 3: Layanan -->
+            <button onclick="openModal('modal-layanan')"
+                class="glass-card slide-up delay-300 p-8 flex flex-col items-center text-center group focus:outline-none focus:ring-2 focus:ring-gold/50">
+                <div
+                    class="w-24 h-24 rounded-2xl bg-gradient-to-br from-white/10 to-transparent flex items-center justify-center mb-6 border border-white/5 group-hover:from-gold/20 group-hover:to-transparent group-hover:border-gold/30 transition-all duration-500 shadow-inner">
+                    <i
+                        class="fas fa-file-signature text-4xl text-platinum group-hover:text-gold transition-colors duration-500 group-hover:scale-110"></i>
+                </div>
+                <h2 class="text-2xl font-semibold mb-3 text-white group-hover:text-gold transition-colors duration-300">
+                    Layanan</h2>
+                <p class="text-sm text-platinum/60 leading-relaxed group-hover:text-platinum/80 transition-colors">Akses
+                    formulir pendaftaran online dan unduh surat hasil pengajuan.</p>
+            </button>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-20 text-center fade-in delay-300 w-full">
+            <p class="text-sm text-platinum/40 font-light">&copy; 2026 Kantor Wilayah Direktorat Jenderal Pemasyarakatan
+                Kalimantan Timur. Hak
+                Cipta Dilindungi.</p>
+        </footer>
+    </div>
+
+    <!-- ===================================== MODALS ===================================== -->
+
+    <!-- Modal 1: Informasi Umum -->
+    <div id="modal-info"
+        class="modal fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-navy/90 backdrop-blur-md">
+        <div
+            class="modal-content w-full max-w-4xl rounded-[2rem] p-6 md:p-8 relative max-h-[95vh] overflow-hidden flex flex-col">
+            <!-- Close Button -->
+            <button onclick="closeModal('modal-info')"
+                class="absolute top-5 right-5 w-10 h-10 bg-white/5 hover:bg-white/10 rounded-full flex items-center justify-center text-platinum/50 hover:text-white transition-all z-10 focus:outline-none focus:ring-2 focus:ring-gold/50">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+
+            <div class="text-center mb-8 shrink-0 mt-2">
+                <h3 class="text-3xl font-bold text-white mb-3">Informasi <span class="text-gold">Umum</span></h3>
+                <div class="w-16 h-1 bg-gold mx-auto rounded-full opacity-80"></div>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-6 overflow-hidden min-h-[350px]">
+                <!-- Sidebar Menu (Mobile: Horizontal Stack, Desktop: Vertical) -->
+                <div
+                    class="w-full md:w-1/3 flex md:flex-col gap-3 overflow-x-auto md:overflow-visible pb-2 md:pb-0 shrink-0 hide-scrollbar">
+                    <button onclick="showSubmenu('info-jam', this)"
+                        class="submenu-btn active whitespace-nowrap text-left px-5 py-4 rounded-xl border border-white/10 bg-navy-lighter/80 hover:bg-navy-lighter transition-all font-medium flex items-center focus:outline-none">
+                        <i class="far fa-clock mr-3 w-5 text-center opacity-70"></i> Jam Pelayanan
+                    </button>
+                    <button onclick="showSubmenu('info-alamat', this)"
+                        class="submenu-btn whitespace-nowrap text-left px-5 py-4 rounded-xl border border-white/10 bg-navy-lighter/80 hover:bg-navy-lighter transition-all font-medium flex items-center focus:outline-none">
+                        <i class="fas fa-map-marker-alt mr-3 w-5 text-center opacity-70"></i> Alamat Kantor
+                    </button>
+                    <button onclick="showSubmenu('info-sosmed', this)"
+                        class="submenu-btn whitespace-nowrap text-left px-5 py-4 rounded-xl border border-white/10 bg-navy-lighter/80 hover:bg-navy-lighter transition-all font-medium flex items-center focus:outline-none">
+                        <i class="fas fa-address-book mr-3 w-5 text-center opacity-70"></i> Kontak
+                    </button>
+                </div>
+
+                <!-- Content Area -->
+                <div class="w-full md:w-2/3 bg-navy-light/80 rounded-2xl p-6 border border-white/10 overflow-y-auto">
+
+                    <!-- Submenu: Jam Pelayanan -->
+                    <div id="info-jam" class="submenu-content active h-full">
+                        <div class="flex items-center mb-6">
+                            <div class="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center mr-4">
+                                <i class="far fa-clock text-gold text-lg"></i>
+                            </div>
+                            <h4 class="text-xl font-semibold text-white">Waktu Operasional</h4>
+                        </div>
+                        <div class="space-y-4">
+                            <div
+                                class="bg-white/5 p-4 rounded-xl border border-white/5 flex justify-between items-center hover:bg-white/10 transition-colors">
+                                <span class="font-medium text-white flex items-center"><i
+                                        class="fas fa-calendar-day mr-3 text-platinum/50"></i>Senin - Jumat</span>
+                                <span
+                                    class="bg-navy-lighter px-4 py-1.5 rounded-lg text-sm text-gold font-medium tracking-wide">08.00
+                                    - 16.00 WITA</span>
+                            </div>
+                            <div
+                                class="bg-red-500/10 p-4 rounded-xl border border-red-500/20 flex justify-between items-center">
+                                <span class="font-medium text-red-200 flex items-center"><i
+                                        class="fas fa-calendar-times mr-3 text-red-400/50"></i>Sabtu, Minggu &
+                                    Libur</span>
+                                <span
+                                    class="bg-red-500/20 text-red-300 px-4 py-1.5 rounded-lg text-sm font-medium">TUTUP</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submenu: Alamat -->
+                    <div id="info-alamat" class="submenu-content h-full">
+                        <div class="flex items-center mb-6">
+                            <div class="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center mr-4">
+                                <i class="fas fa-map-marker-alt text-gold text-lg"></i>
+                            </div>
+                            <h4 class="text-xl font-semibold text-white">Lokasi Kami</h4>
+                        </div>
+                        <div class="bg-white/5 p-6 rounded-2xl border border-white/5 relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 p-8 opacity-5">
+                                <i class="fas fa-building text-9xl"></i>
+                            </div>
+                            <div class="relative z-10">
+                                <p class="text-lg leading-relaxed text-platinum mb-6">
+                                    <strong class="text-white block mb-2 text-xl">Kantor Wilayah Direktorat Jenderal
+                                        Pemasyarakatan Kalimantan Timur</strong>
+                                    Jl. MT. Haryono No.22, Karang Anyar, Kec. Sungai Kunjang, Kota Samarinda, Kalimantan
+                                    Timur 75127
+                                </p>
+                                <a href="https://maps.app.goo.gl/hErvwRqJfNVkSXpW9" target="_blank"
+                                    class="inline-flex items-center justify-center w-full sm:w-auto bg-gradient-to-r from-gold to-yellow-500 text-navy font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-gold/30 hover:scale-105 transition-all duration-300">
+                                    <i class="fas fa-map-marked-alt mr-2"></i> Buka di Google Maps
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submenu: Sosmed & Kontak -->
+                    <div id="info-sosmed" class="submenu-content h-full">
+                        <div class="flex items-center mb-6">
+                            <div class="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center mr-4">
+                                <i class="fas fa-address-book text-gold text-lg"></i>
+                            </div>
+                            <h4 class="text-xl font-semibold text-white">Hubungi Kami</h4>
+                        </div>
+                        <div class="grid gap-4">
+                            <!-- Instagram -->
+                            <a href="https://www.instagram.com/pemasyarakatan_kaltim?igsh=MWRpMnY2b2FhenMxMg=="
+                                target="_blank"
+                                class="flex items-center p-5 bg-white/5 border border-white/5 rounded-2xl hover:border-pink-500/50 hover:bg-white/10 transition-all group">
+                                <div
+                                    class="w-14 h-14 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 flex items-center justify-center text-white text-2xl mr-5 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                    <i class="fab fa-instagram"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h5 class="text-lg font-medium text-white mb-0.5">Instagram</h5>
+                                    <p class="text-sm text-platinum/60 group-hover:text-pink-300 transition-colors">
+                                        @pemasyarakatan_kaltim</p>
+                                </div>
+                                <i
+                                    class="fas fa-chevron-right text-platinum/30 group-hover:text-pink-400 transition-colors"></i>
+                            </a>
+
+                            <!-- Email -->
+                            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=kanwilditjenpaskalimantantimur@gmail.com"
+                                target="_blank"
+                                class="flex items-center p-5 bg-white/5 border border-white/5 rounded-2xl hover:border-red-500/50 hover:bg-white/10 transition-all group">
+                                <div
+                                    class="w-14 h-14 rounded-full bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center text-white text-2xl mr-5 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h5 class="text-lg font-medium text-white mb-0.5">Email</h5>
+                                    <p class="text-sm text-platinum/60 group-hover:text-red-300 transition-colors">
+                                        kanwilditjenpaskalimantantimur@gmail.com</p>
+                                </div>
+                                <i
+                                    class="fas fa-chevron-right text-platinum/30 group-hover:text-red-400 transition-colors"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Alur Permohonan -->
+    <div id="modal-alur"
+        class="modal fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-navy/90 backdrop-blur-md">
+        <div class="modal-content w-full max-w-5xl rounded-[2rem] p-6 md:p-10 relative max-h-[95vh] overflow-y-auto">
+            <button onclick="closeModal('modal-alur')"
+                class="absolute top-5 right-5 w-10 h-10 bg-white/5 hover:bg-white/10 rounded-full flex items-center justify-center text-platinum/50 hover:text-white transition-all z-10 focus:outline-none">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+
+            <div class="text-center mb-8">
+                <h3 class="text-3xl font-bold text-white mb-3">Alur <span class="text-gold">Permohonan</span></h3>
+                <div class="w-16 h-1 bg-gold mx-auto rounded-full opacity-80"></div>
+            </div>
+
+            <div class="bg-navy-light/50 rounded-3xl p-6 md:p-8 border border-white/5 text-center shadow-inner">
+
+                <div class="relative inline-block group mb-8 w-full max-w-3xl mx-auto cursor-zoom-in"
+                    onclick="openLightbox('flow.png')">
+                    <!-- Image container -->
+                    <div
+                        class="overflow-hidden rounded-2xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.3)] bg-navy-lighter/50">
+                        <img src="Alur Permohonan Fix.png" alt="Flowchart Alur Permohonan"
+                            class="w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                            onerror="this.src='https://via.placeholder.com/800x400/112240/D4AF37?text=Klik+untuk+Lihat+Diagram+Alur'">
+                    </div>
+                    <!-- Overlay hint -->
+                    <div
+                        class="absolute inset-0 bg-navy/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-2xl pointer-events-none">
+                        <div
+                            class="bg-black/60 text-white px-6 py-3 rounded-full font-medium flex items-center backdrop-blur-sm">
+                            <i class="fas fa-search-plus mr-2 text-gold"></i> Klik untuk memperbesar
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: Layanan -->
+    <div id="modal-layanan"
+        class="modal fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-navy/90 backdrop-blur-md">
+        <div class="modal-content w-full max-w-3xl rounded-[2rem] p-6 md:p-10 relative max-h-[95vh] overflow-y-auto">
+            <button onclick="closeModal('modal-layanan')"
+                class="absolute top-5 right-5 w-10 h-10 bg-white/5 hover:bg-white/10 rounded-full flex items-center justify-center text-platinum/50 hover:text-white transition-all z-10 focus:outline-none">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+
+            <div class="text-center mb-10">
+                <h3 class="text-3xl font-bold text-white mb-3">Pusat <span class="text-gold">Layanan</span>
+                </h3>
+                <div class="w-16 h-1 bg-gold mx-auto rounded-full opacity-80"></div>
+                <p class="mt-5 text-platinum/70 font-light">Pilih jenis layanan yang ingin Anda akses</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                <!-- Card Layanan 1: Form -->
+                <a href="https://forms.gle/ewuJa9gvYm9zxqr68" target="_blank"
+                    class="group relative overflow-hidden bg-navy-light/40 border border-white/10 rounded-3xl p-8 transition-all duration-300 hover:border-gold/50 hover:bg-navy-lighter hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(212,175,55,0.3)]">
+                    <!-- Decor background -->
+                    <div
+                        class="absolute -right-10 -top-10 w-40 h-40 bg-gold/5 rounded-full blur-2xl group-hover:bg-gold/10 transition-colors">
+                    </div>
+
+                    <div class="relative z-10 flex flex-col items-center text-center h-full justify-center">
+                        <div
+                            class="w-20 h-20 rounded-2xl bg-gradient-to-br from-gold/20 to-gold/5 flex items-center justify-center mb-6 border border-gold/20 group-hover:scale-110 group-hover:from-gold group-hover:to-yellow-500 transition-all duration-500 shadow-lg">
+                            <i
+                                class="fas fa-file-signature text-3xl text-gold group-hover:text-navy transition-colors"></i>
+                        </div>
+                        <h4 class="text-2xl font-bold text-white mb-3 group-hover:text-gold transition-colors">
+                            Form
+                            Permohonan</h4>
+                        <p class="text-sm text-platinum/60 leading-relaxed">Mulai permohonan baru. Isi
+                            biodata lengkap
+                            dan unggah dokumen persyaratan Anda di sini.</p>
+
+                        <div
+                            class="mt-6 inline-flex items-center text-gold text-sm font-semibold opacity-0 transform translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                            Isi Formulir <i class="fas fa-arrow-right ml-2"></i>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Card Layanan 2: Download -->
+                <a href="https://forms.gle/Geegpj5BuE9LUDAD7" target="_blank"
+                    class="group relative overflow-hidden bg-navy-light/40 border border-white/10 rounded-3xl p-8 transition-all duration-300 hover:border-blue-400/50 hover:bg-navy-lighter hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(96,165,250,0.3)]">
+                    <!-- Decor background -->
+                    <div
+                        class="absolute -right-10 -top-10 w-40 h-40 bg-blue-500/5 rounded-full blur-2xl group-hover:bg-blue-500/10 transition-colors">
+                    </div>
+
+                    <div class="relative z-10 flex flex-col items-center text-center h-full justify-center">
+                        <div
+                            class="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500/20 to-blue-500/5 flex items-center justify-center mb-6 border border-blue-500/20 group-hover:scale-110 group-hover:from-blue-500 group-hover:to-blue-400 transition-all duration-500 shadow-lg">
+                            <i
+                                class="fas fa-cloud-download-alt text-3xl text-blue-400 group-hover:text-white transition-colors"></i>
+                        </div>
+                        <h4 class="text-2xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">
+                            Download Hasil</h4>
+                        <p class="text-sm text-platinum/60 leading-relaxed">Cek dan unduh Surat Balasan atas permohonan
+                            Anda.</p>
+
+                        <div
+                            class="mt-6 inline-flex items-center text-blue-400 text-sm font-semibold opacity-0 transform translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                            Unduh Dokumen <i class="fas fa-arrow-right ml-2"></i>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox for Image Zoom -->
+    <div id="lightbox"
+        class="lightbox fixed inset-0 z-[60] bg-black/95 flex items-center justify-center p-2 sm:p-4 backdrop-blur-sm cursor-zoom-out"
+        onclick="closeLightbox()">
+        <button
+            class="absolute top-4 right-4 sm:top-6 sm:right-6 w-12 h-12 bg-white/10 rounded-full text-white/70 hover:text-white hover:bg-white/20 transition-all focus:outline-none flex items-center justify-center">
+            <i class="fas fa-times text-2xl"></i>
+        </button>
+        <img id="lightbox-img" src="" alt="Zoomed Flowchart"
+            class="lightbox-img rounded-xl shadow-2xl border border-white/10">
+    </div>
+
+    <!-- JavaScript for Interactions -->
+    <script>
+        // Disable regular anchor behavior for cards that open modals to prevent scrolling to top
+        document.querySelectorAll('button[onclick^="openModal"]').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+            });
+        });
+
+        // Modal Handling Functions
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('active');
+            document.body.style.overflow = ''; // Restore background scrolling
+        }
+
+        // Close modal when clicking on the dark background overlay
+        window.onclick = function (event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Escape key to close modals and lightbox
+        document.addEventListener('keydown', function (event) {
+            if (event.key === "Escape") {
+                // Close modals
+                document.querySelectorAll('.modal.active').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+
+                // Close lightbox
+                const lightbox = document.getElementById('lightbox');
+                if (lightbox.classList.contains('active')) {
+                    lightbox.classList.remove('active');
+                }
+
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Submenu Handling for "Informasi Umum"
+        function showSubmenu(contentId, btn) {
+            // Hide all content panels
+            const contents = document.querySelectorAll('.submenu-content');
+            contents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Remove active styling from all buttons
+            const btns = document.querySelectorAll('.submenu-btn');
+            btns.forEach(b => {
+                b.classList.remove('active');
+            });
+
+            // Show target content panel and highlight clicked button
+            document.getElementById(contentId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        // Lightbox Handling for "Alur Permohonan" Flowchart
+        function openLightbox(src) {
+            const lightbox = document.getElementById('lightbox');
+            const img = document.getElementById('lightbox-img');
+
+            // Set image source based on clicked element or fallback
+            // In a real scenario, this uses the src passed, but handles missing files gracefully
+            const fallbackSrc = 'https://via.placeholder.com/1200x800/112240/D4AF37?text=Diagram+Alur+Permohonan+Full+Size';
+
+            // Check if actual file exists (simplified approach for dummy data)
+            img.onerror = function () {
+                this.src = fallbackSrc;
+            };
+            img.src = src;
+
+            lightbox.classList.add('active');
+            // Ensure no double-scrollbar if modal was already hiding it
+            document.body.style.overflow = 'hidden';
+
+            // Stop event propagation to prevent immediate closing
+            event.stopPropagation();
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+            // Note: If opened from a modal, we keep body overflow hidden until modal is closed
+            if (!document.querySelector('.modal.active')) {
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Prevent closing lightbox when clicking on the image itself
+        document.getElementById('lightbox-img').addEventListener('click', function (e) {
+            e.stopPropagation();
+        });
+    </script>
+</body>
+
+</html>
