@@ -225,6 +225,52 @@
             border-radius: 50%;
             opacity: 0.5;
         }
+
+        /* Logo Container */
+        .logo-container {
+            background: rgba(17, 34, 64, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s ease;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
+        .logo-container:hover {
+            transform: translateY(-8px);
+            border-color: #D4AF37;
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 15px 40px -10px rgba(212, 175, 55, 0.3);
+        }
+
+        .logo-siperian {
+            height: 128px;
+            width: auto;
+            object-fit: contain;
+            transition: transform 0.5s ease;
+        }
+
+        @media (min-width: 768px) {
+            .logo-siperian {
+                height: 160px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .logo-siperian {
+                height: 192px;
+            }
+        }
+
+        .logo-container:hover .logo-siperian {
+            transform: scale(1.1);
+        }
     </style>
 </head>
 
@@ -254,18 +300,17 @@
     <div class="container mx-auto px-4 py-12 flex flex-col items-center justify-center min-h-screen relative z-10">
 
         <!-- Header / Hero Section -->
-        <header class="text-center mt-12 md:mt-20 mb-16 fade-in w-full max-w-4xl mx-auto px-4">
-
-
-            <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold mb-4 tracking-tight text-white drop-shadow-lg">
-                Si<span class="text-transparent bg-clip-text bg-gradient-to-r from-gold to-yellow-200">Perian</span>
-            </h1>
+        <header class="text-center mt-6 md:mt-10 mb-12 fade-in w-full max-w-4xl mx-auto px-4">
+            <!-- Logo Container -->
+            <div class="mb-8 flex justify-center">
+                <div class="logo-container">
+                    <img src="Logo Siperian.png" alt="Logo SiPerian" class="logo-siperian"
+                        onerror="this.onerror=null; this.src='https://via.placeholder.com/500x200/112240/D4AF37?text=SiPerian'">
+                </div>
+            </div>
             <p class="text-lg md:text-2xl font-light text-platinum/90 max-w-2xl mx-auto leading-relaxed">
                 Sistem Permohonan Praktik Kerja dan Penelitian
             </p>
-            <div
-                class="w-24 h-1.5 bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mt-8 rounded-full opacity-70">
-            </div>
         </header>
 
         <!-- Main Menu Cards -->
